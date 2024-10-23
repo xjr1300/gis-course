@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>PostGISを使用した動的タイルサーバー</title>
+    <!-- maplibre gl js-->
+    <script src="https://unpkg.com/maplibre-gl@^4.0/dist/maplibre-gl.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/maplibre-gl@^4.0/dist/maplibre-gl.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" style="height: 100vh"></div>
+    <script>
+      // ベクトルタイルとラスタータイルのURL
+      const vectortile = window.location.origin + "/vector/{z}/{x}/{y}.pbf";
+      const admintile = window.location.origin + "/admin/{z}/{x}/{y}.pbf";
+      const map = new maplibregl.Map({
+        hash: true,
+        container: "map", // container id
+        style: {
+          version: 8,
+          sources: {
+            gsistd: {
+              type: "raster",
+              tiles: [
+                "https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png",
+              ],
+              tileSize: 256,
+              attribution: "地理院タイル",
+            },
+            vectortile: {
+              type: "vector",
+              tiles: [vectortile],
+              minzoom: 0,
+              maxzoom: 14,
+              attribution: "国土数値情報 - 学校",
+            },
+            admintile: {
+              type: "vector",
+              tiles: [admintile],
+              minzoom: 0,
+              maxzoom: 14,
+              attribution: "国土数値情報 - 行政区域",
+            },
+          },
+          layers: [
+            {
+              id: "gsistd",
+              type: "raster",
+              source: "gsistd",
+            },
+            {
+              id: "admintile-polygon",
+              type: "fill",
+              source: "admintile",
+              "source-layer": "vector",
+              paint: {
+                "fill-color": "rgba(255, 255, 0, 0.5)",
+              },
+            },
+            {
+              id: "admintile-line",
+              type: "line",
+              source: "admintile",
+              "source-layer": "vector",
+              paint: {
+                "line-color": "#198EC8",
+              },
+            },
+            {
+              id: "vectortile",
+              type: "circle",
+              source: "vectortile",
+              "source-layer": "vector",
+              paint: {
+                "circle-color": "red",
+              },
+            },
+          ],
+        },
+      });
+    </script>
+  </body>
+</html>
