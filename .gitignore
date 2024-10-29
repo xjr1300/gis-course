@@ -4,3 +4,4 @@ data/
 6-2.qgz
 pmtile-server/pmtiles/
 *.mbtiles
+*.tif
