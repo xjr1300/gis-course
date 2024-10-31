@@ -5,3 +5,5 @@ data/
 pmtile-server/pmtiles/
 *.mbtiles
 *.tif
+dist/
+node_modules/
